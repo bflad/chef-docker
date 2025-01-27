@@ -1,0 +1,56 @@
+name: 'Run Test Kitchen'
+description: 'Runs Test Kitchen tests with configurable options'
+
+inputs:
+  suite:
+    description: 'Test Kitchen suite to run'
+    required: false
+  os:
+    description: 'Operating system to test'
+    required: false
+  kitchen-yaml:
+    description: 'Kitchen YAML file to use'
+    required: false
+    default: 'kitchen.dokken.yml'
+  chef-version:
+    description: 'Chef version to use'
+    required: false
+    default: 'latest'
+  license-id:
+    description: 'Chef license ID'
+    required: true
+  kitchen-command:
+    description: 'Kitchen command to run (test, verify, etc)'
+    required: false
+    default: 'test'
+  channel:
+    description: 'Chef download channel'
+    required: false
+    default: 'stable'
+  project:
+    description: 'Chef project to download'
+    required: false
+    default: 'chef-workstation'
+  version:
+    description: 'Version of Chef product'
+    required: false
+  windows-path:
+    description: 'Windows installation path'
+    required: false
+    default: 'C:\opscode'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Chef
+      uses: ./.github/actions/chef-install
+      with:
+        version: ${{ inputs.chef-version }}
+        license-id: ${{ inputs.license-id }}
+
+    - name: Run Test Kitchen
+      shell: bash
+      run: kitchen ${{ inputs.kitchen-command }} ${{ inputs.suite }}${{ inputs.suite && inputs.os && '-' }}${{ inputs.os }}
+      env:
+        CHEF_LICENSE: ${{ inputs.license-id }}
+        KITCHEN_LOCAL_YAML: ${{ inputs.kitchen-yaml }}

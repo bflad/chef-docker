@@ -1,0 +1,18 @@
+pre-commit:
+  commands:
+    yamllint:
+      tags: yaml style
+      glob: "*.yml"
+      run: yamllint {staged_files}
+      stage_fixed: true
+    rubocop:
+      tags: backend style
+      glob: "*.rb"
+      exclude: '(^|/)(application|routes)\.rb$'
+      run: chef exec rubocop {staged_files}
+      stage_fixed: true
+    rspec:
+      tags: backend test
+      glob: "spec/*.rb"
+      run: chef exec rspec {staged_files}
+      stage_fixed: true

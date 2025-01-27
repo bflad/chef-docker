@@ -138,7 +138,7 @@ action :create do
           'centos'
         end
 
-      yum_repository 'Docker' do
+      yum_repository 'docker' do
         baseurl "https://#{new_resource.site_url}/linux/#{platform}/#{node['platform_version'].to_i}/#{arch}/#{new_resource.repo_channel}"
         gpgkey "https://#{new_resource.site_url}/linux/#{platform}/gpg"
         description "Docker #{new_resource.repo_channel.capitalize} repository"
@@ -162,13 +162,15 @@ action :create do
 
       package 'apt-transport-https'
 
-      apt_repository 'Docker' do
+      apt_repository 'docker' do
         components Array(new_resource.repo_channel)
         uri "https://#{new_resource.site_url}/linux/#{node['platform']}"
         arch deb_arch
         key "https://#{new_resource.site_url}/linux/#{node['platform']}/gpg"
         action :add
       end
+
+      apt_update 'docker'
     else
       Chef::Log.warn("Cannot setup the Docker repo for platform #{node['platform']}. Skipping.")
     end

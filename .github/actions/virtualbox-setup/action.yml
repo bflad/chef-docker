@@ -1,0 +1,23 @@
+name: 'Setup VirtualBox & Vagrant'
+description: 'Installs VirtualBox and Vagrant on Ubuntu runners'
+
+inputs:
+  virtualbox-version:
+    description: 'Version of VirtualBox to install'
+    required: false
+    default: '*'
+  vagrant-version:
+    description: 'Version of Vagrant to install'
+    required: false
+    default: 'latest'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install VirtualBox & Vagrant
+      shell: bash
+      run: |
+        sudo apt update && sudo apt install virtualbox -y
+        wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+        echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+        sudo apt update && sudo apt install vagrant

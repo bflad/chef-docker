@@ -24,7 +24,10 @@ end
 #########
 
 action :create do
-  package 'curl'
+  package 'curl' do
+    options '--allowerasing'
+    not_if 'rpm -q curl-minimal'
+  end
 
   execute 'install docker' do
     command "curl -sSL #{new_resource.script_url} | sh"

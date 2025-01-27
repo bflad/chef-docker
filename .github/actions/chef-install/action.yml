@@ -1,0 +1,46 @@
+name: 'Install Chef'
+description: 'Installs Chef products on Windows or Linux/macOS'
+
+inputs:
+  channel:
+    description: 'Chef download channel'
+    required: false
+    default: 'stable'
+  project:
+    description: 'Chef project to download'
+    required: false
+    default: 'chef-workstation'
+  version:
+    description: 'Version of Chef product'
+    required: false
+  license-id:
+    description: 'Chef license ID'
+    required: true
+  windows-path:
+    description: 'Windows installation path'
+    required: false
+    default: 'C:\opscode'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Chef on Linux/macOS
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        curl -L https://chefdownload-commercial.chef.io/install.sh?license_id=${{ inputs.license-id }} -o chefDownload.sh
+        sudo chmod +x chefDownload.sh
+        sudo ./chefDownload.sh -c ${{ inputs.channel }} -P ${{ inputs.project }} ${{ inputs.version && format('-v {0}', inputs.version) }}
+        rm -f chefDownload.sh
+
+    - name: Install Chef on Windows
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        . { iwr -useb https://chefdownload-commercial.chef.io/install.ps1?license_id=${{ inputs.license-id }} } | iex;
+        install -channel ${{ inputs.channel }} -project ${{ inputs.project }} ${{ inputs.version && format('-version {0}', inputs.version) }}
+
+    - name: Add Windows Chef Path
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: echo "${{ inputs.windows-path }}\bin" >> $env:GITHUB_PATH

@@ -3,5 +3,26 @@ driver: { name: exec }
 transport: { name: exec }
 
 platforms:
-  - name: macos-latest
-  - name: windows-latest
+  - name: ubuntu-latest
+
+suites:
+  - name: swarm
+    provisioner:
+      enforce_idempotency: false
+      multiple_converge: 1
+    attributes:
+      docker:
+        version: '20.10.11'
+        swarm:
+          init:
+            advertise_addr: '127.0.0.1'
+            listen_addr: '0.0.0.0:2377'
+          rotate_token: true
+          service:
+            name: 'web'
+            image: 'nginx:latest'
+            publish: ['80:80']
+            replicas: 2
+    run_list:
+      - recipe[docker_test::swarm]
+      - recipe[docker_test::swarm_service]

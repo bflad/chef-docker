@@ -77,9 +77,6 @@ suites:
     provisioner:
       enforce_idempotency: false
       multiple_converge: 1
-    attributes:
-      docker:
-        version: '20.10.11'
     run_list:
       - recipe[docker_test::default]
       - recipe[docker_test::image]
@@ -93,9 +90,6 @@ suites:
     provisioner:
       enforce_idempotency: false
       multiple_converge: 1
-    attributes:
-      docker:
-        version: '20.10.11'
     run_list:
       - recipe[docker_test::default]
       - recipe[docker_test::network]
@@ -104,9 +98,6 @@ suites:
     provisioner:
       enforce_idempotency: false
       multiple_converge: 1
-    attributes:
-      docker:
-        version: '20.10.11'
     run_list:
       - recipe[docker_test::default]
       - recipe[docker_test::volume]
@@ -116,12 +107,54 @@ suites:
     provisioner:
       enforce_idempotency: false
       multiple_converge: 1
-    attributes:
-      docker:
-        version: '20.10.11'
     run_list:
       - recipe[docker_test::default]
       - recipe[docker_test::registry]
+
+  ####################
+  # swarm testing
+  ####################
+
+  - name: swarm
+    driver:
+      network:
+        - ["private_network", {ip: "192.168.56.10"}]
+    provisioner:
+      enforce_idempotency: false
+      multiple_converge: 1
+    attributes:
+      docker:
+        swarm:
+          init:
+            advertise_addr: '192.168.56.10'
+            listen_addr: '0.0.0.0:2377'
+          rotate_token: true
+          service:
+            name: 'web'
+            image: 'nginx:latest'
+            publish: ['80:80']
+            replicas: 2
+    run_list:
+      - recipe[docker_test::swarm]
+      - recipe[docker_test::swarm_service]
+
+  - name: swarm_worker
+    driver:
+      network:
+        - ["private_network", {ip: "192.168.56.11"}]
+    provisioner:
+      enforce_idempotency: false
+      multiple_converge: 1
+    attributes:
+      docker:
+        swarm:
+          join:
+            manager_ip: '192.168.56.10:2377'
+            advertise_addr: '192.168.56.11'
+            listen_addr: '0.0.0.0:2377'
+            # Token will be obtained from the manager node
+    run_list:
+      - recipe[docker_test::swarm_worker]
 
   #############################
   # quick service smoke testing
@@ -130,3 +163,28 @@ suites:
   - name: smoke
     run_list:
       - recipe[docker_test::smoke]
+
+  ###############################
+  # docker_swarm resources
+  ###############################
+  - name: swarm
+    includes:
+      - ubuntu-22.04
+    provisioner:
+      enforce_idempotency: false
+      multiple_converge: 1
+    attributes:
+      docker:
+        swarm:
+          init:
+            advertise_addr: '127.0.0.1'
+            listen_addr: '0.0.0.0:2377'
+          rotate_token: true
+          service:
+            name: 'web'
+            image: 'nginx:latest'
+            publish: ['80:80']
+            replicas: 2
+    run_list:
+      - recipe[docker_test::swarm]
+      - recipe[docker_test::swarm_service]

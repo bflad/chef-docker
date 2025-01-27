@@ -88,6 +88,10 @@ Those recipes are found at `test/cookbooks/docker_test`.
 - [docker_tag](documentation/docker_tag.md): image tagging operations
 - [docker_volume](documentation/docker_volume.md): volume operations
 - [docker_volume_prune](documentation/docker_volume_prune.md): remove unused docker volumes
+- [docker_swarm_init](documentation/docker_swarm_init.md): initialize a new Docker swarm cluster
+- [docker_swarm_join](documentation/docker_swarm_join.md): join a node to a Docker swarm cluster
+- [docker_swarm_service](documentation/docker_swarm_service.md): manage Docker swarm services
+- [docker_swarm_token](documentation/docker_swarm_token.md): manage Docker swarm tokens
 
 ## Getting Started
 
