@@ -19,7 +19,7 @@ jobs:
 
   integration:
     needs: lint-unit
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         os:
@@ -51,7 +51,7 @@ jobs:
 
   installation-script:
     needs: lint-unit
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         os:
@@ -77,7 +77,7 @@ jobs:
 
   swarm:
     needs: lint-unit
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         os: ["ubuntu-2204"]
