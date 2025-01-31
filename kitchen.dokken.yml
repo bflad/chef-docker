@@ -67,18 +67,6 @@ platforms:
       image: dokken/oraclelinux-9
       pid_one_command: /usr/lib/systemd/systemd
 
-  - name: rhel-8
-    driver:
-      image: registry.access.redhat.com/ubi8/ubi-init
-      pid_one_command: /sbin/init
-
-  - name: rhel-9
-    driver:
-      image: registry.access.redhat.com/ubi9/ubi-init
-      pid_one_command: /sbin/init
-      intermediate_instructions:
-        - RUN dnf install -y libxcrypt-compat
-
   - name: rockylinux-8
     driver:
       image: dokken/rockylinux-8
