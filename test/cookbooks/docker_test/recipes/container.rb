@@ -1292,3 +1292,10 @@ docker_container 'health_check' do
   )
   action :run
 end
+
+# Test case for digest image format
+docker_container 'sha256-test' do
+  repo 'hello-world'
+  tag 'sha256:0add3ace90ecb4adbf7777e9aacf18357296e799f81cabc9fde470971e499788'
+  action :run
+end
